@@ -1,39 +1,45 @@
-# Emoji Fetch [🦕](https://deno.land)
+# Emoji Scraper
 
-Fetches emojis under a pack from [Emojipedia](https://emojipedia.org) and stores them into JSON and TS files. Created for and Used in [@grammyjs/emoji](https://github.com/grammyjs/emoji). This repository contains a [script to fetch](fetch_emojis.ts) emojis and two **Apple** Emoji list [JSON](emojis.json) & [TS](emojis.ts) files.
+Scrape emoji used by a vendor or platform from [Emojipedia](https://emojipedia.org).
 
-Last updated emojis on: `GMT 06 January 2022 09∶09∶35 PM`
+#### CLI Usage
 
-## Usage
+> You need [Deno](https://deno.land) to use this tool.
 
-[Download the executable](https://github.com/dcdunkan/emoji-scraper/releases/latest) for your OS architecture from the [releases](https://github.com/dcdunkan/emoji-scraper/releases/) and run them.
+You can run the CLI script if you want to scrape the emojis from your CLI:
 
-Or clone the repo or download the script and by using [Deno](https://deno.land):
-
-```bash
-deno run --allow-net allow-write fetch_emojis.ts
-```
-
-By default the script will fetch **Apple (iOS/Mac) emojis** as listed [here](https://emojipedia.org/apple/). But you can change it by adding an argument when running the script or the executable. Example:
-
-For fetching the [emojis by Google](https://emojipedia.org/google/):
+If it is a one-time use:
 
 ```bash
-./emoji google
+$ deno run --allow-write --allow-net \
+  https://raw.githubusercontent.com/dcdunkan/emoji-scraper/main/cli.ts \
+  [options]
 ```
 
-Deno:
+Otherwise, it'll be better to install the script:
 
 ```bash
-deno run --allow-net allow-write fetch_emojis.ts google
+$ deno install --allow-write --allow-net \
+  https://raw.githubusercontent.com/dcdunkan/emoji-scraper/main/cli.ts \
+  --name emoji-scraper # if you want to rename the executable.
+$ emoji-scraper [options]
 ```
 
-## About the Script
+See the `--help` argument for more information.
 
-The script is not perfect. Because it takes around ~1hr. This is probably an one-time build for your projects -- So, that's okay. But it can be even faster and better, for sure. But, right now, I don't have enough skills to do that. But if you do, please open a PR.
+**Example Usage**:
 
-## About the Emoji list
+```bash
+$ emoji-scraper --vendor twitter --json --output emoji.json
+```
 
-Both [JSON](emojis.json) and [TS](emojis.ts) files contains emojis by **Apple**. [The TypeScript file](emojis.ts) has JSDoc comments too. These files were created for [@grammyjs/emoji](https://github.com/grammyjs/emoji).
+#### Module
 
-**Thanks to [Emojipedia](https://emojipedia.org) for the data.**
+```ts
+import {
+  fetchEmoji
+} from "https://raw.githubusercontent.com/dcdunkan/emoji-scraper/main/mod.ts";
+
+const emoji = await fetchEmoji("apple"); // <-- vendor/platform
+console.log(emoji); // array of `Emoji` type.
+```

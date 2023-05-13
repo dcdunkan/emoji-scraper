@@ -2,7 +2,7 @@
 
 Scrape emoji used by a vendor or platform from [Emojipedia](https://emojipedia.org).
 
-#### CLI Usage
+### CLI Usage
 
 > You need [Deno](https://deno.land) to use this tool.
 
@@ -33,7 +33,7 @@ See the `--help` argument for more information.
 $ emoji-scraper --vendor twitter --json --output emoji.json
 ```
 
-#### Module
+### Module
 
 ```ts
 import {

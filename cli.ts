@@ -29,7 +29,7 @@ function error(message: string) {
 
 if (args.help) {
   leave(`Emoji Scraper: A CLI tool for scraping emoji list from
-https://emojipedia.org by a vendor or platform. 
+https://emojipedia.org by a vendor or platform.
 
  --help
     Print help message.
@@ -37,8 +37,12 @@ https://emojipedia.org by a vendor or platform.
     Specify vendor name as in the pathname of an Emojipedia
     vendor/platform page URL. Defaults to 'apple'. You can
     find all vendors here: https://emojipedia.org/vendors.
+ --ts
+    Output as TypeScript. Cannot be used with --json.
+ --json
+    Output as JSON. Cannot be used with --ts.
  --output -o
-    Where to output the TypeScript output of the emoji list.
+    Where to save the TypeScript/JSON output of the emoji list.
     By default the output is printed out to the terminal.
  --version
     Print the scraper version.`);

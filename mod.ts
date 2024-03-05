@@ -111,7 +111,10 @@ function parseEmojiLine(segments: string[]) {
   const semiColonPos = segments.indexOf(";");
   const qualification = segments[semiColonPos + 1] as Qualification;
   const emoji = segments[semiColonPos + 3];
-  const name = segments.slice(semiColonPos + 5).join(" ");
+  const isNewerVersion = segments[semiColonPos + 4].startsWith("E") &&
+    !isNaN(Number(segments[semiColonPos + 4].slice(1)));
+  const offset = isNewerVersion ? 5 : 4;
+  const name = segments.slice(semiColonPos + offset).join(" ");
   const identifier = name.replace(/[^a-zA-Z1-9]/g, "_")
     .replace(/[_]+/g, "_").toLowerCase();
   const emojiFromCodepoints = String.fromCodePoint(

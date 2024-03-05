@@ -1,15 +1,22 @@
-import { parse } from "https://deno.land/std@0.186.0/flags/mod.ts";
+import { parseArgs } from "https://deno.land/std@0.218.2/cli/mod.ts";
 import { fetchEmoji } from "./mod.ts";
-import { makeJSONFileContent, makeTypeScriptFileContent } from "./utilities.ts";
+import {
+  type FormatOptions,
+  makeJSONFileContent,
+  makeTypeScriptFileContent,
+} from "./utilities.ts";
 
-const CLI_VERSION = "v0.1.0";
+const CLI_VERSION = "v0.2.0";
 
-const args = parse(Deno.args, {
-  boolean: ["version", "help", "ts", "json"],
-  string: ["output", "vendor"],
+const args = parseArgs(Deno.args, {
+  boolean: ["version", "help", "ts", "json", "dedupe", "map", "minimal"],
+  string: ["output", "unicode-version"],
   alias: {
     "output": "o",
-    "vendor": "v",
+    "unicode-version": "v",
+  },
+  default: {
+    json: true,
   },
   unknown: (arg) => {
     console.log(`Unknown argument: ${arg}. See --help`);
@@ -27,54 +34,72 @@ function error(message: string) {
   Deno.exit(1);
 }
 
+function warn(message: string) {
+  console.log(`%cwarn%c: ${message}`, "color: orange", "color: none");
+}
+
 if (args.help) {
   leave(`Emoji Scraper: A CLI tool for scraping emoji list from
-https://emojipedia.org by a vendor or platform.
+https://unicode.org by a specified version.
 
- --help
-    Print help message.
- --vendor -v
-    Specify vendor name as in the pathname of an Emojipedia
-    vendor/platform page URL. Defaults to 'apple'. You can
-    find all vendors here: https://emojipedia.org/vendors.
+FETCH OPTIONS
+ --unicode-version -v
+    Specify any valid Unicode version. Omitting this operator
+    will make the CLI fetch the latest version. Find all the
+    valid Unicode versions here: https://unicode.org/Public/emoji/.
+ --dedupe
+    Dedupe the emojis based on their qualifications.
+
+OUTPUT OPTIONS
+ --output -o
+    Where to save the TypeScript/JSON output of the emoji list.
+    By default the output is streamed to STDOUT.
  --ts
     Output as TypeScript. Cannot be used with --json.
  --json
     Output as JSON. Cannot be used with --ts.
- --output -o
-    Where to save the TypeScript/JSON output of the emoji list.
-    By default the output is printed out to the terminal.
+ --map
+    Output an identifier to value object instead of the default array.
+ --minimal
+    Only include the identifier and the emoji itself (drops the other info)
+
  --version
-    Print the scraper version.`);
+    Print the scraper version.
+ --help
+    Print this help message.
+
+For more information and for reporting issues, see
+https://github.com/dcdunkan/emoji-scraper.`);
 }
 
 if (args.version) {
   leave(`emoji-scraper ${CLI_VERSION}`);
 }
 
-if (!args.ts && !args.json) {
-  error("either specify --ts or --json for output format");
-}
 if (args.ts && args.json) {
-  error("only specify either one of --ts and --json");
+  warn("either specify --ts or --json for output format");
 }
 
-if (!args.vendor?.trim()) {
-  console.log(
-    "%cinfo%c: vendor is not specified, using 'apple'",
-    "color: yellow",
-    "color: none",
-  );
+if (!args["unicode-version"]?.trim()) {
+  warn("Unicode version is not specified, fetching the latest");
 }
 
-const vendor = args.vendor?.trim() || "apple";
-console.log(`fetching ${vendor} emoji list`);
-const emoji = await fetchEmoji(vendor);
-console.log(`fetched ${emoji.length} ${vendor} emoji`);
+const version = args["unicode-version"]?.trim() || "latest";
+console.log(`fetching ${version} emoji list`);
+const emoji = await fetchEmoji(version, { dedupeQualifications: args.dedupe });
 
-const fileContent = args.json
-  ? makeJSONFileContent(emoji)
-  : makeTypeScriptFileContent(emoji);
+console.log(`fetched ${emoji.length} of unicode v${version} emoji`);
+
+const formatOptions: FormatOptions = {
+  map: args.map,
+  minimal: args.minimal,
+  useTabs: false,
+  indentSize: 2,
+};
+
+const fileContent = args.ts
+  ? makeTypeScriptFileContent(emoji, { ...formatOptions })
+  : makeJSONFileContent(emoji, { ...formatOptions });
 
 if (args.output) {
   await Deno.writeTextFile(args.output, fileContent);

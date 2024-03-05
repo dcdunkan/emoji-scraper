@@ -1,1 +1,4 @@
-{ "lock": false }
+{
+	"lock": false,
+	"proseWrap": "preserve"
+}

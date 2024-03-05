@@ -1,14 +1,10 @@
 # Emoji Scraper
 
-Scrape emoji used by a vendor or platform from [Emojipedia](https://emojipedia.org).
+Parser for the emoji data provided by Unicode.
 
 ### CLI Usage
 
 > You need [Deno](https://deno.land) to use this tool.
-
-You can run the CLI script if you want to scrape the emojis from your CLI:
-
-If it is a one-time use:
 
 ```bash
 $ deno run --allow-write --allow-net \
@@ -16,30 +12,21 @@ $ deno run --allow-write --allow-net \
   [options]
 ```
 
-Otherwise, it'll be better to install the script:
-
-```bash
-$ deno install --allow-write --allow-net \
-  https://raw.githubusercontent.com/dcdunkan/emoji-scraper/main/cli.ts \
-  --name emoji-scraper # if you want to rename the executable.
-$ emoji-scraper [options]
-```
-
-See the `--help` argument for more information.
+Provide the argument `--help` to see the available options.
 
 **Example Usage**:
 
 ```bash
-$ emoji-scraper --vendor twitter --json --output emoji.json
+$ !! --json --dedupe -o latest.json
 ```
 
 ### Module
 
 ```ts
 import {
-  fetchEmoji
+  fetchEmoji,
 } from "https://raw.githubusercontent.com/dcdunkan/emoji-scraper/main/mod.ts";
 
-const emoji = await fetchEmoji("apple"); // <-- vendor/platform
+const emoji = await fetchEmoji("15.1", { /* options */ });
 console.log(emoji); // array of `Emoji` type.
 ```

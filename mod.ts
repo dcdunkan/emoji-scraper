@@ -40,13 +40,14 @@ export async function fetchEmoji(
     throw new Error(`Failed to fetch ${url}`);
   }
 
-  const rawContent = await response.text();
-  const [, rawList] = rawContent.split("\n\n\n");
   const emoji: Emoji[] = [];
-  const rawLines = rawList.split("\n");
   let group = "", subgroup = "";
 
-  for (let i = 0; i < rawLines.length; i++) {
+  const rawContent = await response.text();
+  const rawLines = rawContent.split("\n");
+  const startingLineIndex = rawLines.findIndex((line) => !line.startsWith("#"));
+
+  for (let i = startingLineIndex; i < rawLines.length; i++) {
     const rawLine = rawLines[i];
     const lineSegments = rawLine.trim().split(/\s+/);
     const lineType = resolveLineType(lineSegments);
@@ -94,6 +95,8 @@ function resolveLineType(segments: string[]) {
       ? "subgroup-title"
       : segments[segments.length - 2] === "subtotal:"
       ? "count"
+      : segments[segments.length - 4] === "subtotal:"
+      ? "wo-count"
       : "unknown"
     : semiColon !== -1 &&
         QUALIFICATIONS.includes(

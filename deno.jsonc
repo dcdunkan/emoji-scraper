@@ -1,4 +1,8 @@
 {
-	"lock": false,
-	"proseWrap": "preserve"
+    "lock": false,
+    "proseWrap": "preserve",
+    "fmt": {
+        "indentWidth": 4
+    },
+    "exclude": ["./emoji-data/"]
 }

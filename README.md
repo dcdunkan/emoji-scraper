@@ -24,9 +24,9 @@ $ !! --json --dedupe -o latest.json
 
 ```ts
 import {
-  fetchEmoji,
+    fetchEmoji,
 } from "https://raw.githubusercontent.com/dcdunkan/emoji-scraper/main/mod.ts";
 
-const emoji = await fetchEmoji("15.1", { /* options */ });
+const emoji = await fetchEmoji("15.1", {/* options */});
 console.log(emoji); // array of `Emoji` type.
 ```
